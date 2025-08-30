@@ -100,7 +100,7 @@ DMARC _dmarc.yourdomain.com  → v=DMARC1; p=quarantine; rua=mailto:dmarc@yourdo
 
 ```bash
 # Clone the repository
-git clone <your-repo>
+git clone https://github.com/rudra-2/mail_server.git
 cd reloop
 
 # Run the setup script
