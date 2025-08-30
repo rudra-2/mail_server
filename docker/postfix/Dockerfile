@@ -5,8 +5,14 @@ LABEL maintainer="Reloop Mail Server"
 ARG DEBIAN_FRONTEND=noninteractive
 ENV LC_ALL=C
 
-# Install required packages
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Configure DNS and update package lists
+RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf && \
+    echo "nameserver 8.8.4.4" >> /etc/resolv.conf
+
+# Install required packages with retry mechanism
+RUN apt-get clean && \
+    apt-get update --fix-missing && \
+    apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     dnsutils \
