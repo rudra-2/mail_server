@@ -26,10 +26,10 @@ RUN apt-get clean && \
     cron \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Create postfix user and group
-RUN groupadd -g 102 postfix \
-    && groupadd -g 103 postdrop \
-    && useradd -g postfix -u 101 -d /var/spool/postfix -s /usr/sbin/nologin postfix
+# Create postfix user and group (handle existing groups/users)
+RUN groupadd -g 102 postfix 2>/dev/null || true \
+    && groupadd -g 103 postdrop 2>/dev/null || true \
+    && useradd -g postfix -u 101 -d /var/spool/postfix -s /usr/sbin/nologin postfix 2>/dev/null || true
 
 # Copy configuration files
 COPY postfix.sh /postfix.sh

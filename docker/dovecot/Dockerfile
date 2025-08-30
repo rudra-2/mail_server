@@ -27,9 +27,9 @@ RUN apt-get clean && \
     cron \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# Create vmail user and group
-RUN groupadd -g 5000 vmail \
-    && useradd -g vmail -u 5000 vmail -d /var/vmail -s /usr/sbin/nologin
+# Create vmail user and group (handle existing groups/users)
+RUN groupadd -g 5000 vmail 2>/dev/null || true \
+    && useradd -g vmail -u 5000 vmail -d /var/vmail -s /usr/sbin/nologin 2>/dev/null || true
 
 # Copy configuration files
 COPY dovecot.sh /dovecot.sh
