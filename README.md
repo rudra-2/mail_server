@@ -42,21 +42,17 @@ chmod +x setup.sh
 ### 1. Initial Server Setup
 
 ```bash
-# Update system
+
 sudo apt update && sudo apt upgrade -y
 
-# Install essential packages
 sudo apt install -y curl wget git ufw fail2ban
 
-# Install Docker
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh get-docker.sh
 
-# Install Docker Compose
 sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
 
-# Add user to docker group
 sudo usermod -aG docker $USER
 newgrp docker
 ```
@@ -64,14 +60,10 @@ newgrp docker
 ### 2. Firewall Configuration
 
 ```bash
-# Configure UFW firewall
-sudo ufw default deny incoming
-sudo ufw default allow outgoing
 
-# Allow SSH (change port if needed)
 sudo ufw allow ssh
 
-# Allow mail ports
+sudo ufw allow 22/tcp   
 sudo ufw allow 25/tcp   # SMTP
 sudo ufw allow 465/tcp  # SMTPS
 sudo ufw allow 587/tcp  # Submission
@@ -80,7 +72,7 @@ sudo ufw allow 993/tcp  # IMAPS
 sudo ufw allow 110/tcp  # POP3
 sudo ufw allow 995/tcp  # POP3S
 
-# Enable firewall
+
 sudo ufw enable
 ```
 
@@ -114,16 +106,16 @@ The setup script will automatically create the `.env` file and prompt you to con
 
 **Required Configuration:**
 ```bash
-# Mail Server Configuration
+
 MAIL_HOSTNAME=mail.yourdomain.com
 
-# Database Configuration (External PostgreSQL)
+
 DB_HOST=your_remote_postgresql_host
 DB_NAME=reloop_mail
 DB_USER=reloop_user
 DB_PASSWORD=reloop_secure_password_2024
 
-# Redis Configuration
+
 REDIS_PASSWORD=reloop_redis_password_2024
 ```
 
@@ -133,7 +125,7 @@ The setup script will automatically generate self-signed certificates for testin
 
 **For production, replace with Let's Encrypt certificates:**
 ```bash
-# Install certbot
+
 sudo apt install certbot
 
 # Generate certificates
@@ -154,10 +146,10 @@ chmod 644 ssl/cert.pem
 **On your remote PostgreSQL server:**
 
 ```sql
--- Create database
+
 CREATE DATABASE reloop_mail;
 
--- Create user
+
 CREATE USER reloop_user WITH PASSWORD 'your_secure_password';
 
 -- Grant privileges
@@ -181,13 +173,11 @@ VALUES ('admin@yourdomain.com', '$1$test123', 'MD5-CRYPT', 'Admin User', 'yourdo
 The setup script will automatically start all services. If you need to restart:
 
 ```bash
-# Start all services
+
 docker-compose up -d
 
-# Check service status
 docker-compose ps
 
-# View logs
 docker-compose logs -f
 ```
 
@@ -347,22 +337,17 @@ Note: SSL certificates are used by Postfix and Dovecot for secure connections.
 ### Basic Commands
 
 ```bash
-# Start all services
+
 docker-compose up -d
 
-# Stop all services
 docker-compose down
 
-# Restart all services
 docker-compose restart
 
-# View running services
 docker-compose ps
 
-# View service logs
 docker-compose logs [service_name]
 
-# Follow logs in real-time
 docker-compose logs -f [service_name]
 ```
 
@@ -377,35 +362,34 @@ docker-compose ps
 ### View Logs
 
 ```bash
-# All services
+
 docker-compose logs
 
-# Specific service
 docker-compose logs postfix
 docker-compose logs dovecot
 docker-compose logs rspamd
 
-# Follow logs in real-time
-docker-compose logs -f
+
+docker-compose logs -f #real-time
 ```
 
 ### Test Mail Server
 
 ```bash
-# Test SMTP
+
 telnet localhost 25
 EHLO mail.yourdomain.com
 
-# Test SMTP Authentication (port 587)
+
 telnet localhost 587
 EHLO mail.yourdomain.com
 AUTH LOGIN
 
-# Test IMAP
+
 telnet localhost 143
 a001 LOGIN username password
 
-# Test database connection
+
 docker-compose exec postfix psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c "SELECT * FROM domain;"
 ```
 
