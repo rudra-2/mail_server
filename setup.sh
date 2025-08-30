@@ -23,7 +23,14 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-if ! command -v docker-compose &> /dev/null && ! docker compose version &> /dev/null; then
+# Check for Docker Compose V2 (preferred) or V1
+if docker compose version &> /dev/null; then
+    echo "✅ Docker Compose V2 detected"
+    DOCKER_COMPOSE_CMD="docker compose"
+elif command -v docker-compose &> /dev/null; then
+    echo "✅ Docker Compose V1 detected"
+    DOCKER_COMPOSE_CMD="docker-compose"
+else
     echo "❌ Docker Compose is not installed. Please install Docker Compose first."
     echo "Run: sudo curl -L \"https://github.com/docker/compose/releases/latest/download/docker-compose-\$(uname -s)-\$(uname -m)\" -o /usr/local/bin/docker-compose && sudo chmod +x /usr/local/bin/docker-compose"
     exit 1
@@ -92,8 +99,8 @@ fi
 
 # Build and start containers
 echo "🐳 Building and starting containers..."
-docker-compose build --no-cache
-docker-compose up -d
+$DOCKER_COMPOSE_CMD build --no-cache
+$DOCKER_COMPOSE_CMD up -d
 
 echo ""
 echo "⏳ Waiting for services to start..."
@@ -102,17 +109,17 @@ sleep 10
 # Check service status
 echo ""
 echo "📊 Service Status:"
-docker-compose ps
+$DOCKER_COMPOSE_CMD ps
 
 echo ""
 echo "🔍 Checking service health..."
 
 # Check if services are running
-if docker-compose ps | grep -q "Up"; then
+if $DOCKER_COMPOSE_CMD ps | grep -q "Up"; then
     echo "✅ All services are running"
 else
     echo "❌ Some services failed to start"
-    echo "Check logs with: docker-compose logs"
+    echo "Check logs with: $DOCKER_COMPOSE_CMD logs"
     exit 1
 fi
 
@@ -136,9 +143,9 @@ echo "   4. Test mail client connections"
 echo "   5. Monitor logs: docker-compose logs -f"
 echo ""
 echo "🔧 Useful commands:"
-echo "   View logs: docker-compose logs -f"
-echo "   Stop services: docker-compose down"
-echo "   Restart services: docker-compose restart"
-echo "   Check status: docker-compose ps"
+echo "   View logs: $DOCKER_COMPOSE_CMD logs -f"
+echo "   Stop services: $DOCKER_COMPOSE_CMD down"
+echo "   Restart services: $DOCKER_COMPOSE_CMD restart"
+echo "   Check status: $DOCKER_COMPOSE_CMD ps"
 echo ""
 echo "📚 For detailed setup instructions, check the README.md file"
