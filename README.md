@@ -461,7 +461,7 @@ docker-compose exec dovecot bash
 
 ## License
 
-This project is based on the BillionMail project and is licensed under AGPLv3.
+This project is based on the Reloop project and is licensed under AGPLv3.
 
 ## Contributing
 
