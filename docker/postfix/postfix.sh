@@ -22,14 +22,11 @@ sed -i "s/\${DOMAIN}/$DOMAIN/g" /etc/postfix/main.cf
 chown -R postfix:postfix /var/spool/postfix
 chmod -R 755 /var/spool/postfix
 
-# Initialize Postfix
 postfix set-permissions
 postfix check
 
-# Start rsyslog
 rsyslogd
 
-# Start Postfix
 postfix start
 
 # Keep container running
