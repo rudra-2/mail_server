@@ -1,6 +1,4 @@
--- Reloop Mail Server Database Schema
--- ===================================
--- This schema is based on the BillionMail project structure
+
 
 -- Domain table for mail domains
 CREATE TABLE IF NOT EXISTS domain (
